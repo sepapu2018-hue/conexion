@@ -1,40 +1,48 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch";
 
 function ListaPosts() {
   const { data: posts, loading, error } = useFetch("/api/posts");
-  const [busqueda, setBusqueda] = useState("");
+
+  const eliminar = async (id) => {
+    await fetch(`/api/posts/${id}`, { method: "DELETE" });
+    window.location.reload();
+  };
 
   if (loading) return <p>Cargando posts...</p>;
-  if (error) return <p>Error cargando posts</p>;
-
-  const postsFiltrados = posts.filter(post =>
-    post.title.toLowerCase().includes(busqueda.toLowerCase())
-  );
+  if (error) return <p>Error: {error}</p>;
 
   return (
-    <main>
-      {/* 🔍 FILTRO DE USUARIO / KEYWORDS */}
-      <input
-        type="text"
-        placeholder="Filtrar por título o usuario..."
-        className="form-input"
-        value={busqueda}
-        onChange={e => setBusqueda(e.target.value)}
-      />
+    <div>
+      <h2>Lista de Posts</h2>
 
       <div className="posts-grid">
-        {postsFiltrados.map(post => (
+        {posts.map((post) => (
           <div key={post.id} className="post-card">
-            <Link className="post-link" to={`/post/${post.id}`}>
+            
+            {/* TITULO */}
+            <Link to={`/post/${post.id}`} className="post-link">
               <h3>{post.title}</h3>
             </Link>
-            <p>{post.body.substring(0, 100)}...</p>
+
+            {/* CONTENIDO (AQUÍ ESTABA TU PROBLEMA) */}
+            <p>{post.body}</p>
+
+            {/* AUTOR */}
+            <p style={{ fontWeight: "bold" }}>Autor: {post.author}</p>
+
+            {/* ÍCONO ELIMINAR */}
+            <button
+              onClick={() => eliminar(post.id)}
+              className="btn-eliminar"
+              style={{ width: "40px", fontSize: "1.2rem" }}
+            >
+              🗑️
+            </button>
           </div>
         ))}
       </div>
-    </main>
+    </div>
   );
 }
 

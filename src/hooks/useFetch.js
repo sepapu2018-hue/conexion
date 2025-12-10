@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 export const useFetch = (url) => {
   const [data, setData] = useState(null);
@@ -6,14 +7,13 @@ export const useFetch = (url) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!url) return;
+
     const fetchData = async () => {
       try {
         setLoading(true);
-        setError(null);
-        const res = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        const result = await res.json();
-        setData(result);
+        const res = await axios.get(url);
+        setData(res.data); // <-- IMPORTANTE
       } catch (err) {
         setError(err.message);
         setData(null);
@@ -21,10 +21,8 @@ export const useFetch = (url) => {
         setLoading(false);
       }
     };
-    
-    if (url) {
-      fetchData();
-    }
+
+    fetchData();
   }, [url]);
 
   return { data, loading, error };

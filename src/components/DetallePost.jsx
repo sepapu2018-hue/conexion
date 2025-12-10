@@ -1,47 +1,25 @@
-import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch";
 
 function DetallePost() {
-  const { id: postId } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  const { data: post, loading, error } = useFetch(`/api/posts/${postId}`);
-  const { data: usuario } = useFetch(
-    post ? `/api/users/${post.userId}` : null
-  );
+  const { data: post, loading, error } = useFetch(`/api/posts/${id}`);
 
-  const [eliminando, setEliminando] = useState(false);
+  const eliminar = async () => {
+    if (!window.confirm("¿Deseas eliminar este post?")) return;
 
-  if (loading) {
-    return (
-      <div className="cargando">
-        <div className="spinner"></div>
-        <p>Cargando detalles...</p>
-      </div>
-    );
-  }
+    await fetch(`/api/posts/${id}`, {
+      method: "DELETE",
+    });
 
-  if (error || !post) {
-    return <div className="error">Error al cargar el post</div>;
-  }
-
-  const handleEliminar = async () => {
-    if (!window.confirm("¿Seguro de eliminar este post?")) return;
-
-    try {
-      setEliminando(true);
-      const respuesta = await fetch(`/api/posts/${postId}`, { method: "DELETE" });
-
-      if (!respuesta.ok) throw new Error("No se pudo eliminar");
-
-      navigate("/");
-    } catch (e) {
-      alert("Error al eliminar: " + e.message);
-    } finally {
-      setEliminando(false);
-    }
+    navigate("/");
   };
+
+  if (loading) return <p>Cargando...</p>;
+  if (error) return <p>Error</p>;
+  if (!post) return <p>No encontrado</p>;
 
   return (
     <div className="detalle-container">
@@ -50,26 +28,17 @@ function DetallePost() {
       <div className="detalle-post">
         <h2>{post.title}</h2>
 
-        {usuario && (
-          <div className="autor" style={{ color: '#000000' }}>
-            <p><strong>Autor:</strong> {usuario.name}</p>
-
-          </div>
-        )}
+        <p style={{ fontWeight: "bold", fontSize: "18px", marginTop: "10px" }}>
+          Autor: {post.author || "Desconocido"}
+        </p>
 
         <div className="contenido">
           <p>{post.body}</p>
         </div>
 
         <div className="acciones">
-          <Link to={`/editar/${postId}`} className="btn-editar">Editar</Link>
-          <button
-            className="btn-eliminar"
-            onClick={handleEliminar}
-            disabled={eliminando}
-          >
-            {eliminando ? "Eliminando..." : "Eliminar"}
-          </button>
+          <Link to={`/editar/${id}`} className="btn-editar">Editar</Link>
+          <button className="btn-eliminar" onClick={eliminar}>Eliminar</button>
         </div>
       </div>
     </div>

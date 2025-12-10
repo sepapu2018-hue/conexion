@@ -6,7 +6,11 @@ function FormularioPost() {
   const navigate = useNavigate();
   const editando = Boolean(id);
 
-  const [post, setPost] = useState({ title: "", body: "" });
+  const [post, setPost] = useState({
+    title: "",
+    body: "",
+    author: ""
+  });
 
   useEffect(() => {
     if (editando) {
@@ -16,7 +20,7 @@ function FormularioPost() {
     }
   }, [editando, id]);
 
-  const guardar = async e => {
+  const guardar = async (e) => {
     e.preventDefault();
 
     const method = editando ? "PUT" : "POST";
@@ -36,6 +40,18 @@ function FormularioPost() {
       <h2>{editando ? "Editar Post" : "Crear Post"}</h2>
 
       <form className="formulario-post" onSubmit={guardar}>
+
+        {/* Autor */}
+        <div className="form-group">
+          <label>Autor</label>
+          <input
+            className="form-input"
+            value={post.author}
+            onChange={(e) => setPost({ ...post, author: e.target.value })}
+          />
+        </div>
+
+        {/* Título */}
         <div className="form-group">
           <label>Título</label>
           <input
@@ -45,6 +61,7 @@ function FormularioPost() {
           />
         </div>
 
+        {/* Contenido */}
         <div className="form-group">
           <label>Contenido</label>
           <textarea
@@ -56,14 +73,11 @@ function FormularioPost() {
 
         <div className="form-actions">
           <button className="btn-primary" type="submit">Guardar</button>
-          <button
-            className="btn-secondary"
-            type="button"
-            onClick={() => navigate("/")}
-          >
+          <button className="btn-secondary" type="button" onClick={() => navigate("/")}>
             Cancelar
           </button>
         </div>
+
       </form>
     </div>
   );
