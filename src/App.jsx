@@ -1,8 +1,8 @@
-import './App.css'
-import { Routes, Route, Link } from 'react-router-dom'
-import ListaPosts from './components/ListaPosts'
-import DetallePost from './components/DetallePost'
-import FormularioPost from './components/FormularioPost'
+import "./App.css";
+import { Routes, Route, Link } from "react-router-dom";
+import ListaPosts from "./components/ListaPosts";
+import DetallePost from "./components/DetallePost";
+import FormularioPost from "./components/FormularioPost";
 
 function App() {
   return (
@@ -15,10 +15,10 @@ function App() {
         <p><strong>Curso:</strong> 2</p>
       </header>
 
-      {/* Aquí irá el contenido de la aplicación */}
-
-      <nav>
-        <Link to="/crear">Crear Nuevo Post</Link>
+      {/* 🔹 NAVEGACIÓN BIEN SEPARADA (Inicio / Crear Post) */}
+      <nav style={{ display: "flex", gap: "1rem", marginBottom: "2rem" }}>
+        <Link to="/">Inicio</Link>
+        <Link to="/crear">Crear Post</Link>
       </nav>
 
       <Routes>
@@ -28,7 +28,7 @@ function App() {
         <Route path="/editar/:id" element={<FormularioPost />} />
       </Routes>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
